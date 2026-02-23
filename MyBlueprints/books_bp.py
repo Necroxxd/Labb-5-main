@@ -11,38 +11,43 @@ books_bp = Blueprint('books_bp', __name__)
 @books_bp.route('/<category>', methods=['GET']) #127.0.0.1:5000/books/<category>
 def get_books(category): # Själva funktionen för routen, kallar på 2 andra funktioner längre ner. 
     # Hämtar urln för den kategorin vi lagt in ovan. 
-    category_url = get_category_url(category)
+    try:
+        category_url = get_category_url(category)
 
-    # Liten felhantering, om den inte hittar en viss kategori
-    if not category_url:
-        return jsonify({"Error": "Hittade inte kategorin"}), 404
-    
-    # Hämtar värdena som returneras från funktionen "books_file"
-    book_data, source = books_file(category, category_url)
+        # Liten felhantering, om den inte hittar en viss kategori
+        if not category_url:
+            return jsonify({"Error": "Hittade inte kategorin"}), 404
+        
+        # Hämtar värdena som returneras från funktionen "books_file"
+        book_data, source = books_file(category, category_url)
 
-    # returnerar värden som vi vill visa.
-    return jsonify(
-        {        
-        "Kategori": category,
-        "Source": source,
-        "antal böcker": len(book_data),
-        "böcker": book_data
-        }
-    ), 200
-
-
+        # returnerar värden som vi vill visa.
+        return jsonify(
+            {        
+            "Kategori": category,
+            "Source": source,
+            "antal böcker": len(book_data),
+            "böcker": book_data
+            }
+        ), 200
+    except FileNotFoundError:
+        return jsonify({
+            "Error": "File Not Found"
+        })
 
 
 def get_category_url(category):
     # Hämtar URL från category_cache för en specifik kategori
     with open('category_cache.json', 'r') as category_file:
-        category_data = json.load(category_file)
-
-    # Loopar igenom varje dictionary i filen och kollar på nycklarna om det finns någon som stämmer med det vi lagt in och hämtar sedan urln.
+                category_data = json.load(category_file)
+        # Loopar igenom varje dictionary i filen och kollar på nycklarna om det finns någon som stämmer med det vi lagt in och hämtar sedan urln.
     for cat in category_data:
         if cat['kategori'] == category:
             category_url= cat['url']
             return category_url
+
+
+        
 
 # Fixar en json fil med datetime och kategori, finns den redan, öppnar den upp den, annars skrapar den information och gör en ny
 def books_file(category, category_url):
@@ -94,3 +99,15 @@ def scrape_books(category_url):
         print(f"Ett fel inträffade: {e}")
     # Returnerar listan med titel pris och betyg.
     return books
+
+'''
+def convert_currency():
+    date = datetime.today().weekday()
+    yesterdays_date = datetime.now().strftime("%Y-%m-%d")
+    if date < 5:
+        
+    else:
+        print('Weekend')
+        '''
+    
+
