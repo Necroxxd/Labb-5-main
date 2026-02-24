@@ -9,7 +9,7 @@ category_bp = Blueprint('category_bp', __name__)
 CATEGORY_CACHE_FILE = 'category_cache.json'
 
 
-@category_bp.route('/') #/categories
+@category_bp.route('/', methods=['Get']) #/categories
 def get_categories():
     #kontrollerar om data finns i cachefilen
     if os.path.exists(CATEGORY_CACHE_FILE):
@@ -52,6 +52,7 @@ def scrape_categories():
 
         for category in side_categories:
             category_name = category.get_text(strip=True)
+            category_name = category_name.replace(" ", "-")
             #.get href hämtar själva länkadressen från a-taggen
             relative_link = category.get('href')
             #klistrar ihop den relativa länken med bas-länken för att få en "full_link"

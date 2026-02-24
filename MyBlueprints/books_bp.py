@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, Blueprint
 import json
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 
 books_bp = Blueprint('books_bp', __name__)
 
@@ -47,8 +47,6 @@ def get_category_url(category):
             return category_url
 
 
-        
-
 # Fixar en json fil med datetime och kategori, finns den redan, öppnar den upp den, annars skrapar den information och gör en ny
 def books_file(category, category_url):
     dagens_datum = datetime.now().strftime("%Y%m%d")
@@ -85,29 +83,61 @@ def scrape_books(category_url):
         #skapar soup-objekt för att kunna navigera i HTML-koden
         soup = BeautifulSoup(response.text, 'html.parser')
         books_divs = soup.select('.product_pod')
-        for book in books_divs:
+        for i, book in enumerate(books_divs):
             title = book.h3.a['title']
-            price = book.select_one('.price_color').get_text(strip=True)
+            # Omvandlar priset till en float och tar bort £ tecknet.
+            price = float(book.select_one('.price_color').get_text(strip=True).replace("£", ""))
+            # Använder funktionen för att konvertera priset, price_kr är en string. 
+            price_kr = convert_currency(price)
             rating_class = book.select_one('.star-rating')['class']
-
             books.append({
+                "id": i + 1,
                 "titel": title,
-                "pris": price,
+                "pris": price_kr,
                 "betyg": rating_class[1] if len(rating_class) > 1 else "Inget betyg"
-            })
+                })
     except Exception as e:
         print(f"Ett fel inträffade: {e}")
     # Returnerar listan med titel pris och betyg.
     return books
 
-'''
-def convert_currency():
-    date = datetime.today().weekday()
-    yesterdays_date = datetime.now().strftime("%Y-%m-%d")
-    if date < 5:
-        
+
+def convert_currency(price):
+    #timedelta används för att kunna "ta bort" dagar från ett datetime objekt, väljer att ta dagen innan för att riksbanken inte uppdaterar varje dag
+    date = datetime.today() - timedelta(days=1)
+    earlier_dates = date
+    #.weekday används för att sätta ett "värde" mellan 1-6 på ett datum. Är värdet 5 eller 6 = helg, annars veckodag. 
+    date = date.weekday()
+    # Börjar counten på 1 istället för att vi ALLTID väljer att ta gårdagens resultat.
+    count = 1
+
+    # Om det är en helg, så loopar den igenom denna kod som uppdaterar datumet en dag bakåt till den kommer till närmsta bankdag
+    while date > 4:
+        # Använder count för att kunna subtrahera dagar, är det söndag kommer loopen gå 2 gånger och få fredagens datum. Lördag loopar 1 gång och får också fredagens datum.
+        count += 1
+        earlier_dates = datetime.today() - timedelta(days=count)
+        date = earlier_dates.weekday()
+
+    #Veckodag
     else:
-        print('Weekend')
-        '''
-    
+        # Konverterar datumet till rätt form så vi kan lägga in den i riksbankens url
+        latest_working_date = earlier_dates.strftime("%Y-%m-%d")
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+        # Lägger in url med vårat datum
+        riksbanken_url = f"https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/sok-rantor-och-valutakurser/?s=g130-SEKGBPPMI&a=D&from={latest_working_date}&to={latest_working_date}&fs=3#result-section"
+        response = requests.get(riksbanken_url, headers=headers, timeout=10)
+        response.encoding = 'utf-8' 
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # Hittar td med klassen res, finns minst 2 stycken som läggs i en lista tack vare find_all
+        value_box = soup.find_all("td", class_="res")
+        # Vi väljer den "boxen" vi vill ha, som ligger på index 1
+        correct_box = value_box[1]
+        # Hämtar "texten" vi vill ha och konverterar till en float så vi kan utföra beräkningar.
+        value = float(correct_box.get_text(strip=True).replace(",", "."))
+        # Avrundar till 2 decimaler
+        price_kr = round(price * value, 2)
+        return f"{price_kr} kr"
+
+
 

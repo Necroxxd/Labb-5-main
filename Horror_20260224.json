@@ -1,0 +1,104 @@
+[
+    {
+        "id": 1,
+        "titel": "Security",
+        "pris": "500 kr",
+        "betyg": "Two"
+    },
+    {
+        "id": 2,
+        "titel": "Follow You Home",
+        "pris": "261.57 kr",
+        "betyg": "One"
+    },
+    {
+        "id": 3,
+        "titel": "The Loney",
+        "pris": "286.55 kr",
+        "betyg": "One"
+    },
+    {
+        "id": 4,
+        "titel": "Pet Sematary",
+        "pris": "129.32 kr",
+        "betyg": "Three"
+    },
+    {
+        "id": 5,
+        "titel": "Doctor Sleep (The Shining #2)",
+        "pris": "491.3 kr",
+        "betyg": "Two"
+    },
+    {
+        "id": 6,
+        "titel": "Psycho: Sanitarium (Psycho #1.5)",
+        "pris": "452.73 kr",
+        "betyg": "Five"
+    },
+    {
+        "id": 7,
+        "titel": "Can You Keep a Secret? (Fear Street Relaunch #4)",
+        "pris": "595.64 kr",
+        "betyg": "One"
+    },
+    {
+        "id": 8,
+        "titel": "Red Dragon (Hannibal Lecter #1)",
+        "pris": "286.18 kr",
+        "betyg": "Three"
+    },
+    {
+        "id": 9,
+        "titel": "Dracula the Un-Dead",
+        "pris": "436.32 kr",
+        "betyg": "Five"
+    },
+    {
+        "id": 10,
+        "titel": "Night Shift (Night Shift #1-20)",
+        "pris": "156.13 kr",
+        "betyg": "Four"
+    },
+    {
+        "id": 11,
+        "titel": "Needful Things",
+        "pris": "581.8 kr",
+        "betyg": "Four"
+    },
+    {
+        "id": 12,
+        "titel": "Misery",
+        "pris": "426.03 kr",
+        "betyg": "Two"
+    },
+    {
+        "id": 13,
+        "titel": "It",
+        "pris": "306.27 kr",
+        "betyg": "Three"
+    },
+    {
+        "id": 14,
+        "titel": "'Salem's Lot",
+        "pris": "606.9 kr",
+        "betyg": "Four"
+    },
+    {
+        "id": 15,
+        "titel": "The Stand",
+        "pris": "708.54 kr",
+        "betyg": "Two"
+    },
+    {
+        "id": 16,
+        "titel": "The Girl with All the Gifts",
+        "pris": "605.8 kr",
+        "betyg": "Three"
+    },
+    {
+        "id": 17,
+        "titel": "House of Leaves",
+        "pris": "672.17 kr",
+        "betyg": "One"
+    }
+]
