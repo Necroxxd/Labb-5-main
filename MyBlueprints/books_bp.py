@@ -139,5 +139,3 @@ def convert_currency(price):
         price_kr = round(price * value, 2)
         return f"{price_kr} kr"
 
-
-

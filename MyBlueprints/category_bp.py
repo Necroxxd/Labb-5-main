@@ -1,9 +1,8 @@
 import os
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 from bs4 import BeautifulSoup
 import json
 import requests
-from datetime import datetime
 
 category_bp = Blueprint('category_bp', __name__)
 CATEGORY_CACHE_FILE = 'category_cache.json'
@@ -32,6 +31,21 @@ def get_categories():
         "antal kategorier": len(category_data),
         "kategorier": category_data
     })
+
+@category_bp.route('/ui', methods=['GET']) #/categories/ui
+def category_view():
+    if os.path.exists(CATEGORY_CACHE_FILE):
+        with open(CATEGORY_CACHE_FILE, 'r') as category_file:
+            category_data = json.load(category_file)
+            source = "Cachad fil"
+    else:
+        data = scrape_categories()
+        source = "Skrapad data från bookstoscrape.com"
+        if data:
+            with open(CATEGORY_CACHE_FILE, 'w') as category_file:
+                json.dump(data, category_file, ensure_ascii=False, indent=4)
+    return render_template('categories.html', categories=category_data, source=source)
+
 #skrapningsfunktion som hämtar kategorier från bookstoscrape.com
 def scrape_categories():
     url= "https://books.toscrape.com"
